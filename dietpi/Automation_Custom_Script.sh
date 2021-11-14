@@ -83,7 +83,7 @@ if [ "$GET_STD_CTS" == "yes" ]
   ### Debian 11 Arm 64 - CT ROOTFS ###
   DISTNAME=debian
   CODENAME=bullseye
-  NEWESTBUILD=$(curl $BASEURL/$DISTNAME/$CODENAME/$ARCHITEC/default/ | grep '<td>' | tail -n 1 | cut -d '='  -f 5 | cut -d '/' -f 2)
+  NEWESTBUILD=$(curl -s $BASEURL/$DISTNAME/$CODENAME/$ARCHITEC/default/ | grep '<td>' | tail -n 1 | cut -d '='  -f 5 | cut -d '/' -f 2)
   wget -q $BASEURL/$DISTNAME/$CODENAME/$ARCHITEC/default/$NEWESTBUILD/rootfs.tar.xz -O Debian11$ARCHITEC-std-$NEWESTBUILD.tar.xz
   ### Ubuntu 20.04 LTS Arm 64 - CT ROOTFS ###
   DISTNAME=ubuntu
@@ -108,7 +108,20 @@ curl -s https://raw.githubusercontent.com/pimox/pimox7/master/KEY.gpg | apt-key 
 apt update && apt install -y raspberrypi-kernel-headers 
 DEBIAN_FRONTEND=noninteractive apt install -y -o Dpkg::Options::="--force-confdef" zfs-dkms
 
-#### INSTALL PIMOX7 AND REBOOT ###########################################################################################################
+#### CONFIGURE NETWORK FOR PIMOX7 SETUP ##################################################################################################
+printf "127.0.0.1\tlocalhost
+$RPI_IP_ONLY\t$HOSTNAME\n" > /etc/hosts
+printf "auto lo
+iface lo inet loopback
+
+auto eth0
+iface eth0 inet static
+        address $RPI_IP
+        netmask $NETMASK
+        gateway $GATEWAY\n" > /etc/network/interfaces
+hostnamectl set-hostname $HOSTNAME
+
+#### INSTALL PIMOX7 ######################################################################################################################
 DEBIAN_FRONTEND=noninteractive apt install -y -o Dpkg::Options::="--force-confdef" proxmox-ve
 
 #### CONFIGURE PIMOX7 BANNER #############################################################################################################
@@ -145,7 +158,7 @@ iface vmbr0 inet static
         bridge-fd 0 \n" > /etc/network/interfaces.new
 hostnamectl set-hostname $HOSTNAME
 
-### FINAL MESSAGE ########################################################################################################################
+### FINAL MESSAGE & REBOOT ###############################################################################################################
 printf "
 =========================================================================================
                    $GREEN     ! INSTALATION COMPLETED ! WAIT ! REBOOT ! $NORMAL
@@ -153,10 +166,7 @@ printf "
 
     after rebbot the PVE web interface will be reachable here :
       --->  $GREEN https://$RPI_IP_ONLY:8006/ $NORMAL <---
-      
-         run ---> $YELLOW apt upgrade -y $NORMAL <---
-           in a root shell to complete the installation.
-           
-\n" && sleep 10 && reboot
+
+\n" && sleep 15 && reboot
 
 #### EOF ####
