@@ -1,2 +1,6 @@
 # pimox7-installer
-Installatin Scripts for PiMox7
+Installation Scripts for PiMox7
+
+## RPiOS
+
+## DietPi
