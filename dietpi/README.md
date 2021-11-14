@@ -9,6 +9,6 @@ DietPi OS Fully Automated Installer
 
 Notes
 ---
-Permalink all files in zip for convinience ---> https://github.com/TuxfeatMac/pimox7-installer/archive/refs/heads/main.zip <---
+1. Permalink all files in zip for convinience ---> https://github.com/TuxfeatMac/pimox7-installer/archive/refs/heads/main.zip <---
 ---
-Thanks @vonloschz for the inspiration
+1. Thanks @vonloschz for the inspiration
