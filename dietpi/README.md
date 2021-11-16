@@ -1,4 +1,4 @@
-DietPi OS Fully Automated Installer
+DietPi OS Fully Automated Installer - Raspberry Pi 4B
 ---
 1. Flash the latest DietPi image from https://dietpi.com/downloads/images/DietPi_RPi-ARMv8-Bullseye.7z .
 2. Replace orginal "dietpi.txt" and "config.txt", add the "Automation_Custom_Script.sh" in /boot/ .
