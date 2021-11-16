@@ -106,7 +106,7 @@ fi
 printf "# PiMox7 Development Repo
 deb https://raw.githubusercontent.com/pimox/pimox7/master/ dev/ \n" > /etc/apt/sources.list.d/pimox.list
 curl -s https://raw.githubusercontent.com/pimox/pimox7/master/KEY.gpg | apt-key add -
-apt update && apt install -y install linux-headers-current-rockchip64 # nmon # tools ...
+apt update && apt install -y install linux-headers-current-rockchip64 rng-tools # nmon # tools ...
 DEBIAN_FRONTEND=noninteractive apt install -y -o Dpkg::Options::="--force-confdef" zfs-dkms
 
 #### CONFIGURE NETWORK FOR PIMOX7 SETUP ##################################################################################################
