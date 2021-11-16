@@ -1,23 +1,23 @@
 # !/bin/bash
-#######################################################################
-# Name:     DietPiOS64-FA-Install.sh           Version:      0.1.2    #
-# Created:  13.11.2021                      Modified: 14.11.2021      #
-# Author:   TuxfeatMac J.T.                                           #
-# Purpose:  interactive, automatic, Pimox7 installation RPi4B, RPi3B+ #
-#######################################################################
-# Tested with image from:					      #
-# https://dietpi.com/downloads/images/DietPi_RPi-ARMv8-Bullseye.7z    #
+########################################################################
+# Name:     DietPiOS64-FA-Install.sh           Version:      0.1.0     #
+# Created:  13.11.2021                      Modified: 14.11.2021       #
+# Author:   TuxfeatMac J.T.                                            #
+# Purpose:  ifully, automatic, Pimox7 installation RockPi4A / B        #
+########################################################################
+# Image intendet to be run on:                                         #
+# https://dietpi.com/downloads/images/DietPi_ROCKPi4-ARMv8-Bullseye.7z #
 #######################################################################################################
 #-----------------------------------------------------------------------------------------------------#
 #---- CONFIGURE-OPTIONS ------------------------------------------------------------------------------#
 #-----------------------------------------------------------------------------------------------------#
-CONFIG_ZRAM='yes'	# (default) yes	  | install zram for swap ?	|			      #
-       ZRAM='1664'	# (default) 1,6GB |				| 			      #
-CONFIG_SWAP='no'	# (default) no    | install dphys-swapfile ?	|			      #
-       SWAP='384'	# (default) 0,4GB | 				| combined 2,0GB swap	      #
-GET_STD_CTS='yes'	# (default) no 	  | Debian & Ubuntu ARM64 TEMPLATEs	| ! DLSIZE ~ 0,15GB   #
-GET_STD_ISO='yes'	# (default) no	  | Debian & Ubuntu ARM64 Install ISOs	| ! DLSIZE ~ 1,35GB   #
-CONF_BANNER='yes'	# (default) yes	  | Replaces the No Subscrition banner with a pimox banner    #
+CONFIG_ZRAM='yes'	# (default) yes	  | install zram for swap ?		|			 				 	  #
+       ZRAM='1664'	# (default) 1,6GB |								| 			    				  #
+CONFIG_SWAP='no'	# (default) no    | install dphys-swapfile ?	|			    				  #
+       SWAP='384'	# (default) 0,4GB | 							| combined 2,0GB swap		  	  #
+GET_STD_CTS='yes'	# (default) no 	  | Debian & Ubuntu ARM64 TEMPLATEs	| ! DLSIZE ~ 0,15GB  		  #
+GET_STD_ISO='yes'	# (default) no	  | Debian & Ubuntu ARM64 Install ISOs	| ! DLSIZE ~ 1,35GB		  #
+CONF_BANNER='yes'	# (default) yes	  | Replaces the No Subscrition banner with a pimox banner		  #
 #-----------------------------------------------------------------------------------------------------#
 #---- END-CONFIGURE-OPTIONS - ! NO TOUCHI BELOW THIS LINE ! - UNLESS YOU KNOW WHAT YOU ARE DOING -----#
 #-----------------------------------------------------------------------------------------------------#
@@ -64,12 +64,13 @@ if [ "$CONFIG_SWAP" == "yes" ]
 fi
 
 #### FIX CONTAINER STATS NOT SHOWING UP IN WEB GUI #######################################################################################
-if [ "$(cat /boot/cmdline.txt | grep cgroup)" != "" ]
- then
-  printf "Seems to be already fixed!"
- else
-  sed -i "1 s|$| cgroup_enable=cpuset cgroup_enable=memory cgroup_memory=1|" /boot/cmdline.txt
-fi
+#if [ "$(cat /boot/cmdline.txt | grep cgroup)" != "" ]
+# then
+#  printf "Seems to be already fixed!"
+# else
+#  sed -i "1 s|$| cgroup_enable=cpuset cgroup_enable=memory cgroup_memory=1|" /boot/cmdline.txt
+#fi
+# NO NEED NOT ON A RASPI
 
 #### PRE FETCH ISOS / CT TEMPLATES #######################################################################################################
 if [ "$GET_STD_CTS" == "yes" ]
@@ -84,12 +85,12 @@ if [ "$GET_STD_CTS" == "yes" ]
   DISTNAME=debian
   CODENAME=bullseye
   NEWESTBUILD=$(curl -s $BASEURL/$DISTNAME/$CODENAME/$ARCHITEC/default/ | grep '<td>' | tail -n 1 | cut -d '='  -f 5 | cut -d '/' -f 2)
-  wget -q $BASEURL/$DISTNAME/$CODENAME/$ARCHITEC/default/$NEWESTBUILD/rootfs.tar.xz -O Debian11$ARCHITEC-std-$NEWESTBUILD.tar.xz
+  wget $BASEURL/$DISTNAME/$CODENAME/$ARCHITEC/default/$NEWESTBUILD/rootfs.tar.xz -O Debian11$ARCHITEC-std-$NEWESTBUILD.tar.xz
   ### Ubuntu 20.04 LTS Arm 64 - CT ROOTFS ###
-  #DISTNAME=ubuntu
-  #CODENAME=focal
-  #NEWESTBUILD=$(curl $BASEURL/$DISTNAME/$CODENAME/$ARCHITEC/default/ | grep '<td>' | tail -n 1 | cut -d '='  -f 5 | cut -d '/' -f 2)
-  #wget -q $BASEURL/$DISTNAME/$CODENAME/$ARCHITEC/default/$NEWESTBUILD/rootfs.tar.xz -O Ubuntu20$ARCHITEC-std-$NEWESTBUILD.tar.xz
+  DISTNAME=ubuntu
+  CODENAME=focal
+  NEWESTBUILD=$(curl $BASEURL/$DISTNAME/$CODENAME/$ARCHITEC/default/ | grep '<td>' | tail -n 1 | cut -d '='  -f 5 | cut -d '/' -f 2)
+  wget $BASEURL/$DISTNAME/$CODENAME/$ARCHITEC/default/$NEWESTBUILD/rootfs.tar.xz -O Ubuntu20$ARCHITEC-std-$NEWESTBUILD.tar.xz
 fi
 if [ "$GET_STD_ISO" == "yes" ]
  then
@@ -98,23 +99,14 @@ if [ "$GET_STD_ISO" == "yes" ]
   mkdir -p /var/lib/vz/template/iso
   cd /var/lib/vz/template/iso
   wget -q https://cdimage.debian.org/debian-cd/current/arm64/iso-cd/debian-11.1.0-arm64-netinst.iso	# debian arm64 net installer iso
-  #wget -q https://cdimage.ubuntu.com/releases/20.04/release/ubuntu-20.04.3-live-server-arm64.iso   	# ubuntu arm64 server iso
+  wget -q https://cdimage.ubuntu.com/releases/20.04/release/ubuntu-20.04.3-live-server-arm64.iso   	# ubuntu arm64 server iso
 fi
 
 #### ADD SOURCE PIMOX7 + KEY & UPDATE & INSTALL RPI-KERNEL-HEADERS & ZFS-DKMS ############################################################
 printf "# PiMox7 Development Repo
 deb https://raw.githubusercontent.com/pimox/pimox7/master/ dev/ \n" > /etc/apt/sources.list.d/pimox.list
 curl -s https://raw.githubusercontent.com/pimox/pimox7/master/KEY.gpg | apt-key add -
-####
-
-apt update && apt install -y install linux-headers-$(uname -r) 
-####
-
-
-
-
-
-####
+apt update && apt install -y install linux-headers-current-rockchip64 # nmon # tools ...
 DEBIAN_FRONTEND=noninteractive apt install -y -o Dpkg::Options::="--force-confdef" zfs-dkms
 
 #### CONFIGURE NETWORK FOR PIMOX7 SETUP ##################################################################################################
@@ -174,7 +166,7 @@ printf "
 =========================================================================================
 
     after rebbot the PVE web interface will be reachable here :
-      --->  $GREEN https://$RPI_IP_ONLY:8006/ $NORMAL <---
+      --->  $GREEN https://$RPI_IP:8006/ $NORMAL <---
 
 \n" && sleep 15 && reboot
 
