@@ -1,0 +1,9 @@
+verbosity=4
+bootlogo=false
+overlay_prefix=rockchip
+fdtfile=rockchip/rk3399-rock-pi-4a.dtb
+rootdev=UUID=07e32b84-80f4-48a9-a7a0-ad09da30111c
+rootfstype=ext4
+usbstoragequirks=0x2537:0x1066:u,0x2537:0x1068:u
+extraargs="net.ifnames=0"
+docker_optimizations=off
