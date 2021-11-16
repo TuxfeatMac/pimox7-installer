@@ -3,7 +3,7 @@
 # Name:     DietPiOS64-FA-Install.sh           Version:      0.1.0     #
 # Created:  13.11.2021                      Modified: 14.11.2021       #
 # Author:   TuxfeatMac J.T.                                            #
-# Purpose:  ifully, automatic, Pimox7 installation RockPi4A / B        #
+# Purpose:  fully, automatic, Pimox7 installation RockPi 4 A / B       #
 ########################################################################
 # Image intendet to be run on:                                         #
 # https://dietpi.com/downloads/images/DietPi_ROCKPi4-ARMv8-Bullseye.7z #
@@ -11,13 +11,13 @@
 #-----------------------------------------------------------------------------------------------------#
 #---- CONFIGURE-OPTIONS ------------------------------------------------------------------------------#
 #-----------------------------------------------------------------------------------------------------#
-CONFIG_ZRAM='yes'	# (default) yes	  | install zram for swap ?		|			 				 	  #
-       ZRAM='1664'	# (default) 1,6GB |								| 			    				  #
-CONFIG_SWAP='no'	# (default) no    | install dphys-swapfile ?	|			    				  #
-       SWAP='384'	# (default) 0,4GB | 							| combined 2,0GB swap		  	  #
-GET_STD_CTS='yes'	# (default) no 	  | Debian & Ubuntu ARM64 TEMPLATEs	| ! DLSIZE ~ 0,15GB  		  #
-GET_STD_ISO='yes'	# (default) no	  | Debian & Ubuntu ARM64 Install ISOs	| ! DLSIZE ~ 1,35GB		  #
-CONF_BANNER='yes'	# (default) yes	  | Replaces the No Subscrition banner with a pimox banner		  #
+CONFIG_ZRAM='yes/no'	# (default) yes   | install zram for swap ?		|  sets swappiness=90    #
+       ZRAM='1664'	# (default) 1,6GB |		        combined 2,0GB swap |                        #
+CONFIG_SWAP='yes/no'	# (default) no    | install dphys-swapfile ?            |                        #
+       SWAP='384'	# (default) 0,4GB | 						|                        #
+GET_STD_CTS='yes/no'	# (default) no    | Debian & Ubuntu ARM64 TEMPLATEs	| ! DLSIZE ~ 0,15G  !    #
+GET_STD_ISO='yes/no'	# (default) no    | Debian & Ubuntu ARM64 Install ISOs	| ! DLSIZE ~ 1,35GB !    #
+CONF_BANNER='yes'	# (default) yes   | Replaces the No Subscrition banner with a pimox banner       #
 #-----------------------------------------------------------------------------------------------------#
 #---- END-CONFIGURE-OPTIONS - ! NO TOUCHI BELOW THIS LINE ! - UNLESS YOU KNOW WHAT YOU ARE DOING -----#
 #-----------------------------------------------------------------------------------------------------#
@@ -39,11 +39,10 @@ GREY=$(tput setaf 8)
 #### BASE UPDATE, DEPENDENCIES INSTALLATION #############################################################################################
 printf "
 =========================================================================================
- $GREEN Begin installation, Normal duration on a default RPi3+ ~ $YELLOW 30 $GREEN minutes, be patient...! $NORMAL
+ $GREEN Begin installation, default duration on a RockPi4 ~ $YELLOW 20 $GREEN minutes, be patient...! $NORMAL
 =========================================================================================\n
 "
 apt update && apt upgrade -y # Allready done by DietPi, check anyway...
-#apt install nmon htop atop # tools you need...
 
 #### ZRAM SWAP INSTALL ##################################################################################################################
 if [ "$CONFIG_ZRAM" == "yes" ]
@@ -63,15 +62,6 @@ if [ "$CONFIG_SWAP" == "yes" ]
   systemctl restart dphys-swapfile.service
 fi
 
-#### FIX CONTAINER STATS NOT SHOWING UP IN WEB GUI #######################################################################################
-#if [ "$(cat /boot/cmdline.txt | grep cgroup)" != "" ]
-# then
-#  printf "Seems to be already fixed!"
-# else
-#  sed -i "1 s|$| cgroup_enable=cpuset cgroup_enable=memory cgroup_memory=1|" /boot/cmdline.txt
-#fi
-# NO NEED NOT ON A RASPI
-
 #### PRE FETCH ISOS / CT TEMPLATES #######################################################################################################
 if [ "$GET_STD_CTS" == "yes" ]
  then
@@ -89,7 +79,7 @@ if [ "$GET_STD_CTS" == "yes" ]
   ### Ubuntu 20.04 LTS Arm 64 - CT ROOTFS ###
   DISTNAME=ubuntu
   CODENAME=focal
-  NEWESTBUILD=$(curl $BASEURL/$DISTNAME/$CODENAME/$ARCHITEC/default/ | grep '<td>' | tail -n 1 | cut -d '='  -f 5 | cut -d '/' -f 2)
+  NEWESTBUILD=$(curl -s $BASEURL/$DISTNAME/$CODENAME/$ARCHITEC/default/ | grep '<td>' | tail -n 1 | cut -d '='  -f 5 | cut -d '/' -f 2)
   wget $BASEURL/$DISTNAME/$CODENAME/$ARCHITEC/default/$NEWESTBUILD/rootfs.tar.xz -O Ubuntu20$ARCHITEC-std-$NEWESTBUILD.tar.xz
 fi
 if [ "$GET_STD_ISO" == "yes" ]
@@ -98,8 +88,8 @@ if [ "$GET_STD_ISO" == "yes" ]
   mkdir -p /var/lib/vz/template
   mkdir -p /var/lib/vz/template/iso
   cd /var/lib/vz/template/iso
-  wget -q https://cdimage.debian.org/debian-cd/current/arm64/iso-cd/debian-11.1.0-arm64-netinst.iso	# debian arm64 net installer iso
-  wget -q https://cdimage.ubuntu.com/releases/20.04/release/ubuntu-20.04.3-live-server-arm64.iso   	# ubuntu arm64 server iso
+  wget https://cdimage.debian.org/debian-cd/current/arm64/iso-cd/debian-11.1.0-arm64-netinst.iso	# debian arm64 net installer iso
+  wget https://cdimage.ubuntu.com/releases/20.04/release/ubuntu-20.04.3-live-server-arm64.iso   	# ubuntu arm64 server iso
 fi
 
 #### ADD SOURCE PIMOX7 + KEY & UPDATE & INSTALL RPI-KERNEL-HEADERS & ZFS-DKMS ############################################################
