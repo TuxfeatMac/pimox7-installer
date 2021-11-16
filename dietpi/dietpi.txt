@@ -52,7 +52,7 @@ AUTO_SETUP_DHCP_TO_STATIC=0
 
 ##### Misc Options #####
 # Swap space size to generate: 0 => disable | 1 => auto | 2 and up => size in MiB
-AUTO_SETUP_SWAPFILE_SIZE=1
+AUTO_SETUP_SWAPFILE_SIZE=0
 # Swap space location: "zram" => swap space on /dev/zram0 (auto-size = 50% of RAM size) | /path/to/file => swap file at location (auto-size = 2 GiB minus RAM size)
 AUTO_SETUP_SWAPFILE_LOCATION=/var/swap
 
@@ -86,7 +86,7 @@ AUTO_SETUP_SSH_SERVER_INDEX=-2
 AUTO_SETUP_FILE_SERVER_INDEX=0
 
 # Logging mode choice: 0=none/custom | -1=RAMlog 1h clear | -2=RAMlog 1h save clear | -3=rsyslog + logrotate
-AUTO_SETUP_LOGGING_INDEX=-1
+AUTO_SETUP_LOGGING_INDEX=-0
 # RAMlog max tmpfs size (MB). 50MB should be fine for single use. 200MB+ for heavy webserver and access log etc.
 AUTO_SETUP_RAMLOG_MAXSIZE=50
 
