@@ -14,5 +14,4 @@ Based on images from:
 
 ---> https://dietpi.com/downloads/images/DietPi_RPi-ARMv8-Bullseye.7z
 - Makes use of the Automation_Custum_Script.sh
-- Completely headless
-
+- Completely headless setup
