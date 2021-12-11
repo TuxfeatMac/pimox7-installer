@@ -10,4 +10,5 @@ DietPi OS Fully Automated Installer - Raspberry Pi 4B
 Notes
 ---
 1. Permalink all files in zip for convinience ---> https://github.com/TuxfeatMac/pimox7-installer/archive/refs/heads/main.zip <---
-2. Thanks @vonloschz for the inspiration
+2. DietPi form guide https://dietpi.com/phpbb/viewtopic.php?t=9660
+3. Thanks @vonloschz for the inspiration
